@@ -2,24 +2,31 @@ package com.busalert.wear.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Paleta principal vino tinto
-val Vinotinto        = Color(0xFF800020)
-val VinotintoDark    = Color(0xFF4A0012)
-val VinotintoLight   = Color(0xFFB0003A)
-val VinotintoGlow    = Color(0x33800020) // vino tinto con transparencia para sombras/glows
+// ── Vino tinto principal ─────────────────────────────────────
+val Vinotinto        = Color(0xFF7B0D2A)   // vino tinto profundo
+val VinotintoDark    = Color(0xFF4A0019)   // vino tinto muy oscuro (fondos)
+val VinotintoDeep    = Color(0xFF2E000F)   // casi negro vino (fondo máximo contraste)
+val VinotintoLight   = Color(0xFFB0274A)   // vino tinto claro (acentos, animaciones)
+val VinotintoSoft    = Color(0xFFD4607A)   // vino tinto suave (detalles secundarios)
 
-// Fondos
-val SoftBackground   = Color(0xFFFFFFFF)
-val GradientStart    = Color(0xFFFFFFFF)
-val GradientMid      = Color(0xFFFDF0F2)
-val GradientEnd      = Color(0xFFF5E0E4)
+// ── Blancos y cremas ─────────────────────────────────────────
+val PureWhite        = Color(0xFFFFFFFF)
+val SoftWhite        = Color(0xFFF8F0F2)   // blanco con toque rosa muy sutil
+val CreamWhite       = Color(0xFFFCEEF1)   // crema cálida para fondos claros
+val WhiteAlpha80     = Color(0xCCFFFFFF)   // blanco 80% opacidad
+val WhiteAlpha50     = Color(0x80FFFFFF)   // blanco 50% opacidad
+val WhiteAlpha20     = Color(0x33FFFFFF)   // blanco 20% opacidad (sobre fondos oscuros)
 
-// Textos
-val TextDark         = Color(0xFF1A1A1A)
-val TextMedium       = Color(0xFF555555)
-val TextLight        = Color(0xFF999999)
+// ── Gradientes ───────────────────────────────────────────────
+val GradientLight1   = Color(0xFFFFFFFF)
+val GradientLight2   = Color(0xFFFAE8EC)
+val GradientLight3   = Color(0xFFF0C8D0)
 
-// Acento / éxito
-val AccentGold       = Color(0xFFD4A017)
-val SuccessGreen     = Color(0xFF2E7D32)
-val ErrorRed         = Color(0xFFB71C1C)
+// ── Textos ───────────────────────────────────────────────────
+val TextOnDark       = Color(0xFFFFFFFF)   // texto sobre fondos oscuros
+val TextOnLight      = Color(0xFF3A000F)   // texto oscuro sobre fondos claros
+val TextSubtle       = Color(0xFF8A4A5A)   // texto secundario/sutil
+
+// ── Superficie ───────────────────────────────────────────────
+val SurfaceDark      = Color(0xFF5C0020)   // superficie elevada sobre fondo oscuro
+val SurfaceLight     = Color(0xFFFFFFFF)   // superficie sobre fondo claro

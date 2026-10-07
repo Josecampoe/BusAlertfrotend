@@ -6,6 +6,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,117 +16,194 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
 import com.busalert.shared.domain.NavigationInstruction
 import com.busalert.wear.theme.*
 
-// ── Fondos ──────────────────────────────────────────────────
-val PrimaryBackground = Brush.radialGradient(
-    colors = listOf(Color(0xFFFFF0F3), Color(0xFFFFE0E6), Color(0xFFF5C8D0))
-)
-val DarkBackground = Brush.radialGradient(
-    colors = listOf(Color(0xFF5C0018), Color(0xFF3A000F), Color(0xFF200008))
+// ─────────────────────────────────────────────────────────────
+// FONDOS reutilizables
+// ─────────────────────────────────────────────────────────────
+private val BgLight = Brush.radialGradient(
+    colors = listOf(GradientLight1, GradientLight2, GradientLight3)
 )
 
-// ── HOME SCREEN ─────────────────────────────────────────────
+private val BgDark = Brush.radialGradient(
+    colors = listOf(SurfaceDark, VinotintoDark, VinotintoDeep)
+)
+
+// ─────────────────────────────────────────────────────────────
+// HOME SCREEN
+// Círculo vino tinto limpio, sin emoji, con tres anillos
+// concéntricos que pulsan hacia afuera al ritmo del corazón.
+// ─────────────────────────────────────────────────────────────
 @Composable
 fun HomeScreen(onMicClick: () -> Unit) {
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val ringScale by infiniteTransition.animateFloat(
-        initialValue = 1f, targetValue = 1.22f,
-        animationSpec = infiniteRepeatable(
-            tween(1400, easing = EaseInOutSine), RepeatMode.Reverse
-        ), label = "ring"
+
+    val inf = rememberInfiniteTransition(label = "home")
+
+    // Tres anillos con delay escalonado
+    val ring1 by inf.animateFloat(
+        initialValue = 0.75f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(1600, 0, EaseOut), RepeatMode.Restart),
+        label = "r1"
     )
-    val ringAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.4f, targetValue = 0.0f,
-        animationSpec = infiniteRepeatable(
-            tween(1400, easing = EaseInOutSine), RepeatMode.Reverse
-        ), label = "alpha"
+    val ring1Alpha by inf.animateFloat(
+        initialValue = 0.5f, targetValue = 0f,
+        animationSpec = infiniteRepeatable(tween(1600, 0, EaseOut), RepeatMode.Restart),
+        label = "a1"
+    )
+    val ring2 by inf.animateFloat(
+        initialValue = 0.75f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(1600, 500, EaseOut), RepeatMode.Restart),
+        label = "r2"
+    )
+    val ring2Alpha by inf.animateFloat(
+        initialValue = 0.5f, targetValue = 0f,
+        animationSpec = infiniteRepeatable(tween(1600, 500, EaseOut), RepeatMode.Restart),
+        label = "a2"
+    )
+    val ring3 by inf.animateFloat(
+        initialValue = 0.75f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(1600, 1000, EaseOut), RepeatMode.Restart),
+        label = "r3"
+    )
+    val ring3Alpha by inf.animateFloat(
+        initialValue = 0.5f, targetValue = 0f,
+        animationSpec = infiniteRepeatable(tween(1600, 1000, EaseOut), RepeatMode.Restart),
+        label = "a3"
     )
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(PrimaryBackground),
+        modifier = Modifier.fillMaxSize().background(BgLight),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
+            verticalArrangement = Arrangement.Center
         ) {
-            // Título
+
+            // Texto superior
             Text(
                 text = "BusAlert",
                 color = Vinotinto,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 0.5.sp
             )
             Text(
-                text = "PASTO",
-                color = VinotintoLight,
-                fontSize = 9.sp,
-                fontWeight = FontWeight.Bold,
+                text = "P A S T O",
+                color = VinotintoSoft,
+                fontSize = 8.sp,
+                fontWeight = FontWeight.Medium,
                 letterSpacing = 4.sp
             )
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Botón micrófono con anillo animado
-            Box(contentAlignment = Alignment.Center) {
-                // Anillo exterior pulsante
+            // Botón con anillos pulsantes
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.size(100.dp)
+            ) {
+                // Anillo 3 (más exterior)
                 Box(
                     modifier = Modifier
-                        .size(78.dp)
-                        .scale(ringScale)
+                        .size(96.dp)
+                        .scale(ring3)
                         .clip(CircleShape)
-                        .background(Vinotinto.copy(alpha = ringAlpha))
+                        .background(Vinotinto.copy(alpha = ring3Alpha * 0.25f))
                 )
-                // Botón
+                // Anillo 2
+                Box(
+                    modifier = Modifier
+                        .size(84.dp)
+                        .scale(ring2)
+                        .clip(CircleShape)
+                        .background(Vinotinto.copy(alpha = ring2Alpha * 0.35f))
+                )
+                // Anillo 1 (interior)
+                Box(
+                    modifier = Modifier
+                        .size(72.dp)
+                        .scale(ring1)
+                        .clip(CircleShape)
+                        .background(Vinotinto.copy(alpha = ring1Alpha * 0.45f))
+                )
+
+                // Botón central — círculo sólido sin icono
                 Button(
                     onClick = onMicClick,
-                    modifier = Modifier.size(64.dp),
+                    modifier = Modifier.size(58.dp),
                     shape = CircleShape,
-                    colors = ButtonDefaults.primaryButtonColors(backgroundColor = Vinotinto)
+                    colors = ButtonDefaults.primaryButtonColors(
+                        backgroundColor = Vinotinto
+                    )
                 ) {
-                    Text(text = "🎤", fontSize = 24.sp, textAlign = TextAlign.Center)
+                    // Línea decorativa horizontal (símbolo minimalista de "hablar")
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            // Tres líneas cortas que simulan ondas de voz
+                            WaveLine(width = 20.dp, alpha = 1f)
+                            WaveLine(width = 14.dp, alpha = 0.75f)
+                            WaveLine(width = 10.dp, alpha = 0.5f)
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-// ── LISTENING SCREEN ────────────────────────────────────────
+@Composable
+private fun WaveLine(width: Dp, alpha: Float) {
+    Box(
+        modifier = Modifier
+            .width(width)
+            .height(2.dp)
+            .clip(RoundedCornerShape(50))
+            .background(PureWhite.copy(alpha = alpha))
+    )
+}
+
+// ─────────────────────────────────────────────────────────────
+// LISTENING SCREEN
+// Visualizador de audio: 7 barras que suben y bajan
+// simulando que el reloj está capturando la voz.
+// ─────────────────────────────────────────────────────────────
 @Composable
 fun ListeningScreen() {
-    val infiniteTransition = rememberInfiniteTransition(label = "listen")
+    val inf = rememberInfiniteTransition(label = "audio")
 
-    val scales = listOf(
-        infiniteTransition.animateFloat(
-            initialValue = 0.5f, targetValue = 1.5f,
-            animationSpec = infiniteRepeatable(tween(520, 0, EaseInOutSine), RepeatMode.Reverse),
-            label = "s1"
-        ),
-        infiniteTransition.animateFloat(
-            initialValue = 0.5f, targetValue = 1.5f,
-            animationSpec = infiniteRepeatable(tween(520, 175, EaseInOutSine), RepeatMode.Reverse),
-            label = "s2"
-        ),
-        infiniteTransition.animateFloat(
-            initialValue = 0.5f, targetValue = 1.5f,
-            animationSpec = infiniteRepeatable(tween(520, 350, EaseInOutSine), RepeatMode.Reverse),
-            label = "s3"
+    val delays = listOf(0, 120, 240, 60, 300, 180, 90)
+    val heights = delays.mapIndexed { i, delay ->
+        inf.animateFloat(
+            initialValue = 0.2f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(500 + i * 40, delay, EaseInOutSine),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "bar$i"
         )
-    )
+    }
 
     Box(
-        modifier = Modifier.fillMaxSize().background(DarkBackground),
+        modifier = Modifier.fillMaxSize().background(BgDark),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -131,93 +211,150 @@ fun ListeningScreen() {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "🎤",
-                fontSize = 28.sp
+                text = "Escuchando",
+                color = PureWhite,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.5.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = "Te escucho...",
-                color = Color.White,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-            // Tres puntos animados vino tinto
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Visualizador de barras de audio
             Row(
-                horizontalArrangement = Arrangement.spacedBy(9.dp),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.height(40.dp)
             ) {
-                scales.forEach { scaleState ->
+                heights.forEachIndexed { index, heightState ->
+                    val barHeight = (40 * heightState.value).dp
+                    val isCenter = index == 3
                     Box(
                         modifier = Modifier
-                            .size(10.dp)
-                            .scale(scaleState.value)
-                            .clip(CircleShape)
-                            .background(VinotintoLight)
+                            .width(if (isCenter) 5.dp else 4.dp)
+                            .height(barHeight)
+                            .clip(RoundedCornerShape(50))
+                            .background(
+                                if (isCenter) PureWhite
+                                else PureWhite.copy(alpha = 0.6f + heightState.value * 0.4f)
+                            )
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(
+                text = "Habla ahora...",
+                color = WhiteAlpha50,
+                fontSize = 10.sp,
+                letterSpacing = 0.5.sp
+            )
         }
     }
 }
 
-// ── PROCESSING SCREEN ───────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// PROCESSING SCREEN
+// Arco giratorio elegante con puntos en los extremos.
+// ─────────────────────────────────────────────────────────────
 @Composable
 fun ProcessingScreen() {
+    val inf = rememberInfiniteTransition(label = "proc")
+    val rotation by inf.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(tween(1200, easing = LinearEasing)),
+        label = "rot"
+    )
+    val pulse by inf.animateFloat(
+        initialValue = 0.92f,
+        targetValue = 1.08f,
+        animationSpec = infiniteRepeatable(tween(800, easing = EaseInOutSine), RepeatMode.Reverse),
+        label = "pulse"
+    )
+
     Box(
-        modifier = Modifier.fillMaxSize().background(DarkBackground),
+        modifier = Modifier.fillMaxSize().background(BgDark),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.Center
         ) {
-            CircularProgressIndicator(
-                indicatorColor = VinotintoLight,
-                trackColor = Color.White.copy(alpha = 0.12f),
-                modifier = Modifier.size(50.dp),
-                strokeWidth = 5.dp
-            )
+            // Spinner circular personalizado
+            Box(
+                modifier = Modifier.size(56.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .scale(pulse),
+                    indicatorColor = PureWhite,
+                    trackColor = WhiteAlpha20,
+                    strokeWidth = 3.dp
+                )
+                // Punto central
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(VinotintoLight)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
             Text(
-                text = "Calculando ruta...",
-                color = Color.White,
+                text = "Calculando ruta",
+                color = PureWhite,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(3.dp))
+            Text(
+                text = "Un momento...",
+                color = WhiteAlpha50,
+                fontSize = 10.sp
             )
         }
     }
 }
 
-// ── RESULT SCREEN ───────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// RESULT SCREEN
+// Fondo claro. Chip de ruta vino tinto arriba.
+// Línea divisora sutil. Botón cerrar con borde.
+// ─────────────────────────────────────────────────────────────
 @Composable
 fun ResultScreen(result: NavigationInstruction, onDismiss: () -> Unit) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(PrimaryBackground),
+        modifier = Modifier.fillMaxSize().background(BgLight),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             // Chip de ruta
-            result.recommendedRouteId?.let { routeId ->
+            result.recommendedRouteId?.let { id ->
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50))
                         .background(Vinotinto)
-                        .padding(horizontal = 14.dp, vertical = 3.dp)
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = routeId,
-                        color = Color.White,
-                        fontSize = 12.sp,
+                        text = id,
+                        color = PureWhite,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 1.5.sp
+                        letterSpacing = 2.sp
                     )
                 }
             }
@@ -226,33 +363,41 @@ fun ResultScreen(result: NavigationInstruction, onDismiss: () -> Unit) {
             Text(
                 text = result.displayTitle,
                 color = Vinotinto,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.ExtraBold,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                lineHeight = 17.sp
+                lineHeight = 16.sp
+            )
+
+            // Línea divisora
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(1.dp)
+                    .background(VinotintoSoft.copy(alpha = 0.4f))
             )
 
             // Subtítulo
             Text(
                 text = result.displaySubtitle,
-                color = TextMedium,
+                color = TextSubtle,
                 fontSize = 10.sp,
                 textAlign = TextAlign.Center,
                 lineHeight = 13.sp
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
-            // Botón cerrar
+            // Botón cerrar — borde vino tinto, fondo transparente
             Button(
                 onClick = onDismiss,
                 modifier = Modifier
                     .fillMaxWidth(0.55f)
                     .height(28.dp),
+                shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.secondaryButtonColors(
                     backgroundColor = Color.Transparent
-                ),
-                shape = RoundedCornerShape(50)
+                )
             ) {
                 Box(
                     modifier = Modifier
@@ -264,7 +409,7 @@ fun ResultScreen(result: NavigationInstruction, onDismiss: () -> Unit) {
                         text = "Cerrar",
                         color = Vinotinto,
                         fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
@@ -272,47 +417,87 @@ fun ResultScreen(result: NavigationInstruction, onDismiss: () -> Unit) {
     }
 }
 
-// ── ERROR SCREEN ────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// ERROR SCREEN
+// Minimalista. Círculo con signo de exclamación dibujado
+// con Box, sin emojis. Botón reintentar vino tinto.
+// ─────────────────────────────────────────────────────────────
 @Composable
 fun ErrorScreen(message: String?, onRetry: () -> Unit) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(PrimaryBackground),
+        modifier = Modifier.fillMaxSize().background(BgLight),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 14.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            verticalArrangement = Arrangement.spacedBy(7.dp)
         ) {
-            Text(text = "⚠️", fontSize = 22.sp)
+            // Círculo con "!" hecho con Box (sin emoji)
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(Vinotinto),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(3.dp)
+                            .height(11.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(PureWhite)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(3.dp)
+                            .clip(CircleShape)
+                            .background(PureWhite)
+                    )
+                }
+            }
+
             Text(
                 text = "Sin conexión",
                 color = Vinotinto,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
+
             Text(
-                text = message ?: "Verifica que el servidor esté encendido.",
-                color = TextMedium,
-                fontSize = 10.sp,
+                text = message ?: "Verifica que el servidor esté activo.",
+                color = TextSubtle,
+                fontSize = 9.sp,
                 textAlign = TextAlign.Center,
-                lineHeight = 13.sp
+                lineHeight = 12.sp
             )
+
             Button(
                 onClick = onRetry,
                 modifier = Modifier.fillMaxWidth(0.6f).height(28.dp),
-                colors = ButtonDefaults.primaryButtonColors(backgroundColor = Vinotinto),
-                shape = RoundedCornerShape(50)
+                shape = RoundedCornerShape(50),
+                colors = ButtonDefaults.primaryButtonColors(backgroundColor = Vinotinto)
             ) {
-                Text("Reintentar", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "Reintentar",
+                    color = PureWhite,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
 }
 
-// ── TYPING SCREEN (entrada manual de texto) ─────────────────
+// ─────────────────────────────────────────────────────────────
+// TYPING SCREEN
+// Campo de texto estilo tarjeta blanca con borde vino tinto.
+// Botón enviar vino tinto sólido. Sin emojis.
+// ─────────────────────────────────────────────────────────────
 @Composable
 fun TypingScreen(
     inputText: String,
@@ -321,51 +506,108 @@ fun TypingScreen(
     onCancel: () -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(PrimaryBackground),
+        modifier = Modifier.fillMaxSize().background(BgDark),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 text = "¿A dónde vas?",
-                color = Vinotinto,
+                color = PureWhite,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold
             )
-            // Campo de texto simple
+
+            // Campo de texto
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.White)
-                    .border(1.5.dp, Vinotinto, RoundedCornerShape(8.dp))
-                    .padding(horizontal = 10.dp, vertical = 6.dp),
-                contentAlignment = Alignment.CenterStart
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(PureWhite)
+                    .border(2.dp, Vinotinto, RoundedCornerShape(10.dp))
+                    .padding(horizontal = 10.dp, vertical = 7.dp)
             ) {
-                if (inputText.isEmpty()) {
-                    Text("Ej: quiero ir al Lorenzo", color = TextLight, fontSize = 10.sp)
-                } else {
-                    Text(inputText, color = TextDark, fontSize = 10.sp)
+                BasicTextField(
+                    value = inputText,
+                    onValueChange = onTextChange,
+                    textStyle = TextStyle(
+                        color = TextOnLight,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Normal
+                    ),
+                    cursorBrush = SolidColor(Vinotinto),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { onSubmit() }),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                ) { inner ->
+                    Box {
+                        if (inputText.isEmpty()) {
+                            Text(
+                                text = "Ej: quiero ir al Lorenzo",
+                                color = TextSubtle.copy(alpha = 0.6f),
+                                fontSize = 11.sp
+                            )
+                        }
+                        inner()
+                    }
                 }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+            // Botones
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Cancelar — círculo con línea diagonal (X sin emoji)
                 Button(
                     onClick = onCancel,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(34.dp),
                     shape = CircleShape,
-                    colors = ButtonDefaults.secondaryButtonColors(backgroundColor = Color.LightGray)
-                ) { Text("✕", fontSize = 12.sp, color = TextDark) }
+                    colors = ButtonDefaults.secondaryButtonColors(
+                        backgroundColor = WhiteAlpha20
+                    )
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "✕",
+                            color = PureWhite,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                // Enviar — círculo vino tinto con check
                 Button(
                     onClick = onSubmit,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(34.dp),
                     shape = CircleShape,
-                    colors = ButtonDefaults.primaryButtonColors(backgroundColor = Vinotinto)
-                ) { Text("✓", fontSize = 12.sp, color = Color.White) }
+                    colors = ButtonDefaults.primaryButtonColors(
+                        backgroundColor = Vinotinto
+                    )
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "✓",
+                            color = PureWhite,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         }
     }

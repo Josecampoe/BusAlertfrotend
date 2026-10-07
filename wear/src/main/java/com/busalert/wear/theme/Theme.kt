@@ -1,27 +1,29 @@
 package com.busalert.wear.theme
 
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Colors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.wear.compose.material.Colors
+import androidx.wear.compose.material.MaterialTheme
 
 val BusAlertColors = Colors(
-    primary = Vinotinto,
-    primaryVariant = VinotintoDark,
-    secondary = Vinotinto,
+    primary          = Vinotinto,
+    primaryVariant   = VinotintoDark,
+    secondary        = VinotintoLight,
     secondaryVariant = VinotintoDark,
-    background = SoftBackground,
-    surface = SoftBackground,
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onBackground = TextDark,
-    onSurface = TextDark
+    background       = SoftWhite,
+    surface          = PureWhite,
+    onPrimary        = PureWhite,
+    onSecondary      = PureWhite,
+    onBackground     = TextOnLight,
+    onSurface        = TextOnLight,
+    error            = Color(0xFFB71C1C),
+    onError          = PureWhite
 )
 
 @Composable
 fun BusAlertTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colors = BusAlertColors,
+        colors  = BusAlertColors,
         content = content
     )
 }
